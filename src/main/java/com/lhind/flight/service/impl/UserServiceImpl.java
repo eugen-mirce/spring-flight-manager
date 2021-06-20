@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -33,13 +34,15 @@ public class UserServiceImpl implements UserService {
     private final TripRepository tripRepository;
     private final FlightRepository flightRepository;
     private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, TripRepository tripRepository, FlightRepository flightRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, TripRepository tripRepository, FlightRepository flightRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.tripRepository = tripRepository;
         this.flightRepository = flightRepository;
         this.modelMapper = modelMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService {
             throw new UserServiceException("Password can not be empty.");
 
         UserEntity userEntity = modelMapper.map(userDTO,UserEntity.class);
-        userEntity.setEncryptedPassword(userDTO.getPassword());             //TODO EncryptPassword
+        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
 //        userEntity.setRoles()                                               //TODO SetRole User
 
         userEntity = userRepository.save(userEntity);
@@ -92,6 +95,15 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUser(int id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        return modelMapper.map(userEntity,UserDTO.class);
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if(userEntity == null)
+            throw new UserServiceException("User Not Found.");
+
         return modelMapper.map(userEntity,UserDTO.class);
     }
 

@@ -9,6 +9,7 @@ import java.util.Collection;
 public class UserPrincipal implements UserDetails {
     private UserEntity userEntity;
     public UserPrincipal(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
     @Override

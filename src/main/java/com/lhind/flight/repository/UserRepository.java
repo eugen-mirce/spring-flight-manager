@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository     // JpaRepository extends PagingAndSortingRepository (which extends CrudRepository)
 public interface UserRepository extends JpaRepository<UserEntity,Integer> {
     UserEntity findByEmail(String email);
