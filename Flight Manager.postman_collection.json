@@ -14,11 +14,14 @@
 						{
 							"name": "Create User",
 							"request": {
+								"auth": {
+									"type": "noauth"
+								},
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"firstName\" : \"Eugen\",\r\n    \"lastName\" : \"Mirce\",\r\n    \"email\" : \"eugen@domain.com\",\r\n    \"password\" : \"password\"\r\n}",
+									"raw": "{\r\n    \"firstName\" : \"Eugen\",\r\n    \"lastName\" : \"Mirce\",\r\n    \"email\" : \"eugen@domai1n.com\",\r\n    \"password\" : \"password\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -656,6 +659,38 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Login Request",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"eugen@domain.com\",\r\n    \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -663,7 +698,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "{{{{auth}}}}",
+				"value": "{{auth}}",
 				"type": "string"
 			}
 		]
@@ -690,8 +725,8 @@
 	],
 	"variable": [
 		{
-			"key": "{{auth}}",
-			"value": ""
+			"key": "auth",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJldWdlbkBkb21haW4uY29tIiwiZXhwIjoxNjI1MDQxNTQ4fQ.DRYjcALN233Qa_hCuT7uyhfSRataimXwoNMB2uAujkKcGlvelGK31uzFyYwYArEi0MkUc-APCPee2wBuD6KcMw"
 		}
 	]
 }
