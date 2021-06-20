@@ -1,5 +1,6 @@
 package com.lhind.flight.service.impl;
 
+import com.lhind.flight.exception.FlightServiceException;
 import com.lhind.flight.exception.TripServiceException;
 import com.lhind.flight.exception.UserServiceException;
 import com.lhind.flight.model.entity.FlightEntity;
@@ -112,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
         TripEntity tripEntity = modelMapper.map(trip,TripEntity.class);
         tripEntity.setUser(userEntity);
-        tripEntity.setStatus("WAITING FOR APPROVAL");     //Default Value
+        tripEntity.setStatus("PENDING");     //Default Value
         tripEntity = tripRepository.save(tripEntity);
 
         userEntity.addTrip(tripEntity);
@@ -152,6 +153,128 @@ public class UserServiceImpl implements UserService {
         tripRepository.save(tripEntity);
 
         return modelMapper.map(flightEntity,FlightDTO.class);
+    }
+
+    @Override
+    public List<FlightDTO> getFlights(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Not Found."));
+
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(() -> new TripServiceException("Trip Not Found."));
+
+        List<FlightEntity> flights = flightRepository.findAllByTrip(tripEntity);
+        Type listType = new TypeToken<List<FlightDTO>>(){}.getType();
+
+        return modelMapper.map(flights,listType);
+    }
+
+    @Override
+    public FlightDTO getFlight(int userId, int tripId, int flightId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new UserServiceException("User Not Found."));
+
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(() -> new TripServiceException("Trip Not Found."));
+
+        FlightEntity flightEntity = flightRepository.findByIdAndTrip(flightId,tripEntity)
+                .orElseThrow(() -> new FlightServiceException("Flight Not Found."));
+
+        return modelMapper.map(flightEntity,FlightDTO.class);
+    }
+
+    @Override
+    public FlightDTO updateFlight(int userId, int tripId, int flightId, FlightDTO flight) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new UserServiceException("User Not Found."));
+
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(() -> new TripServiceException("Trip Not Found."));
+
+        FlightEntity flightEntity = flightRepository.findByIdAndTrip(flightId,tripEntity)
+                .orElseThrow(() -> new FlightServiceException("Flight Not Found."));
+
+        //TODO Add Flight Missing Fields Exceptions
+        flightEntity.setFrom(flight.getFrom());
+        flightEntity.setTo(flight.getTo());
+        flightEntity.setDepartureDate(flight.getDepartureDate());
+        flightEntity.setDepartureDate(flight.getDepartureDate());
+        flightRepository.save(flightEntity);
+
+        return modelMapper.map(flightEntity,FlightDTO.class);
+    }
+
+    @Override
+    public void deleteFlight(int userId, int tripId, int flightId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new UserServiceException("User Not Found."));
+
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(() -> new TripServiceException("Trip Not Found."));
+
+        FlightEntity flightEntity = flightRepository.findByIdAndTrip(flightId,tripEntity)
+                .orElseThrow(() -> new FlightServiceException("Flight Not Found."));
+
+        flightRepository.delete(flightEntity);
+    }
+
+    @Override
+    public TripDTO getTrip(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        return modelMapper.map(tripEntity,TripDTO.class);
+    }
+
+    @Override
+    public TripDTO updateTrip(int userId, int tripId, TripDTO trip) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        //TODO Add Missing Fields Exceptions
+        tripEntity.setReason(trip.getReason());
+        tripEntity.setDescription(trip.getDescription());
+        tripEntity.setFrom(trip.getFrom());
+        tripEntity.setTo(trip.getTo());
+        tripEntity.setDepartureDate(trip.getDepartureDate());
+        tripEntity.setArrivalDate(trip.getArrivalDate());
+
+        tripRepository.save(tripEntity);
+
+        return modelMapper.map(tripEntity,TripDTO.class);
+    }
+
+    @Override
+    public void requestTripApproval(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        if(tripEntity.getStatus().equalsIgnoreCase("CREATED")) {
+            tripEntity.setStatus("PENDING");
+            tripRepository.save(tripEntity);
+        } else if(tripEntity.getStatus().equalsIgnoreCase("APPROVED")) {
+            throw new TripServiceException("Trip Is Already Approved");
+        } else if(tripEntity.getStatus().equalsIgnoreCase("PENDING")) {
+            throw new TripServiceException("You Have Already Requested To Approve");
+        } else {
+            throw new TripServiceException("Trip Is Denied");
+        }
+    }
+
+    @Override
+    public void deleteTrip(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        tripRepository.delete(tripEntity);
     }
 
 

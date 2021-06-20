@@ -69,12 +69,20 @@ public class UserController {
         return modelMapper.map(users,listType);
     }
 
+    //TODO Authenticated
     @PostMapping(path = "{userId}/trips")
     public TripRest createTrip(@PathVariable int userId, @RequestBody TripDTO trip) {
         TripDTO savedTrip = userService.createTrip(userId,trip);
         return modelMapper.map(savedTrip, TripRest.class);
     }
 
+    //TODO Authenticated
+    @PostMapping(path = "{userId}/trips/{tripId}/request_approval")
+    public void requestApproval(@PathVariable int userId, @PathVariable int tripId) {
+        userService.requestTripApproval(userId,tripId);
+    }
+
+    //TODO Authenticated
     @GetMapping(path = "{userId}/trips")
     public List<TripRest> getTrips(@PathVariable int userId) {
         List<TripDTO> trips = userService.getUserTrips(userId);
@@ -82,10 +90,61 @@ public class UserController {
         return modelMapper.map(trips,listType);
     }
 
+    //TODO Authenticated
+    @GetMapping(path = "{userId}/trips/{tripId}")
+    public TripRest getTrip(@PathVariable int userId, @PathVariable int tripId) {
+        TripDTO trip = userService.getTrip(userId,tripId);
+        return modelMapper.map(trip,TripRest.class);
+    }
+
+    //TODO Authenticated
+    @PutMapping(path = "{userId}/trips/{tripId}")
+    public TripRest updateTrip(@PathVariable int userId, @PathVariable int tripId, @RequestBody TripDTO trip) {
+        TripDTO updatedTrip = userService.updateTrip(userId,tripId,trip);
+        return modelMapper.map(updatedTrip,TripRest.class);
+    }
+
+    //TODO Authenticated
+    @DeleteMapping(path = "{userId}/trips/{tripId}")
+    public ResponseEntity<String> deleteTrip(@PathVariable int userId, @PathVariable int tripId) {
+        userService.deleteTrip(userId,tripId);
+        return new ResponseEntity<String>("DELETED", new HttpHeaders(), HttpStatus.OK);
+    }
+
+    //TODO Authenticated
     @PostMapping(path = "{userId}/trips/{tripId}/flights")
     public FlightRest createFlight(@PathVariable int userId, @PathVariable int tripId, @RequestBody FlightDTO flight) {
         FlightDTO savedFlight = userService.createFlight(userId, tripId, flight);
 
         return modelMapper.map(savedFlight,FlightRest.class);
+    }
+
+    //TODO Authenticated
+    @GetMapping(path = "{userId}/trips/{tripId}/flights")
+    public List<FlightRest> getFlights(@PathVariable int userId, @PathVariable int tripId) {
+        List<FlightDTO> flights = userService.getFlights(userId,tripId);
+        Type listType = new TypeToken<List<FlightRest>>(){}.getType();
+        return modelMapper.map(flights,listType);
+    }
+
+    //TODO Authenticated
+    @GetMapping(path = "{userId}/trips/{tripId}/flights/{flightId}")
+    public FlightRest getFlight(@PathVariable int userId, @PathVariable int tripId, @PathVariable int flightId) {
+        FlightDTO flight = userService.getFlight(userId,tripId,flightId);
+        return modelMapper.map(flight,FlightRest.class);
+    }
+
+    //TODO Authenticated
+    @PutMapping(path = "{userId}/trips/{tripId}/flights/{flightId}")
+    public FlightRest updateFlight(@PathVariable int userId, @PathVariable int tripId, @PathVariable int flightId, @RequestBody FlightDTO flight) {
+        FlightDTO updatedFlight = userService.updateFlight(userId,tripId,flightId,flight);
+        return modelMapper.map(updatedFlight,FlightRest.class);
+    }
+
+    //TODO Authenticated
+    @DeleteMapping(path = "{userId}/trips/{tripId}/flights/{flightId}")
+    public ResponseEntity<String> deleteFlight(@PathVariable int userId, @PathVariable int tripId, @PathVariable int flightId) {
+        userService.deleteFlight(userId,tripId,flightId);
+        return new ResponseEntity<String>("DELETED", new HttpHeaders(), HttpStatus.OK);
     }
 }
