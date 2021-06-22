@@ -4,9 +4,11 @@ import com.lhind.flight.exception.FlightServiceException;
 import com.lhind.flight.exception.TripServiceException;
 import com.lhind.flight.exception.UserServiceException;
 import com.lhind.flight.model.entity.FlightEntity;
+import com.lhind.flight.model.entity.RoleEntity;
 import com.lhind.flight.model.entity.TripEntity;
 import com.lhind.flight.model.entity.UserEntity;
 import com.lhind.flight.repository.FlightRepository;
+import com.lhind.flight.repository.RoleRepository;
 import com.lhind.flight.repository.TripRepository;
 import com.lhind.flight.repository.UserRepository;
 import com.lhind.flight.security.UserPrincipal;
@@ -26,6 +28,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -33,14 +37,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TripRepository tripRepository;
     private final FlightRepository flightRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, TripRepository tripRepository, FlightRepository flightRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, TripRepository tripRepository, FlightRepository flightRepository, RoleRepository roleRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.tripRepository = tripRepository;
         this.flightRepository = flightRepository;
+        this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -61,7 +67,8 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = modelMapper.map(userDTO,UserEntity.class);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-//        userEntity.setRoles()                                               //TODO SetRole User
+        RoleEntity userRole = roleRepository.findByName("ROLE_USER");
+        userEntity.setRoles(Collections.singletonList(userRole));
 
         userEntity = userRepository.save(userEntity);
 
@@ -125,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
         TripEntity tripEntity = modelMapper.map(trip,TripEntity.class);
         tripEntity.setUser(userEntity);
-        tripEntity.setStatus("PENDING");     //Default Value
+        tripEntity.setStatus("CREATED");     //Default Value
         tripEntity = tripRepository.save(tripEntity);
 
         userEntity.addTrip(tripEntity);

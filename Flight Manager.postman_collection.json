@@ -21,7 +21,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"firstName\" : \"Eugen\",\r\n    \"lastName\" : \"Mirce\",\r\n    \"email\" : \"eugen@domai1n.com\",\r\n    \"password\" : \"password\"\r\n}",
+									"raw": "{\r\n    \"firstName\" : \"Eugen\",\r\n    \"lastName\" : \"Mirce\",\r\n    \"email\" : \"eugen@domain.com\",\r\n    \"password\" : \"password\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -146,7 +146,7 @@
 								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/trips/5/status/created",
+									"raw": "http://localhost:8080/trips/2/status/approved",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -154,9 +154,9 @@
 									"port": "8080",
 									"path": [
 										"trips",
-										"5",
+										"2",
 										"status",
-										"created"
+										"approved"
 									]
 								}
 							},
@@ -309,7 +309,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Eugen\",\r\n    \"lastName\": \"Mirce\"\r\n}",
+							"raw": "{\r\n    \"firstName\": \"Eugen1\",\r\n    \"lastName\": \"Mirce\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -317,7 +317,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1",
+							"raw": "http://localhost:8080/users/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -325,7 +325,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -371,7 +371,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/trips",
+							"raw": "http://localhost:8080/users/2/trips",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -379,7 +379,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"2",
 								"trips"
 							]
 						}
@@ -404,7 +404,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/trips",
+							"raw": "http://localhost:8080/users/2/trips",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -412,7 +412,7 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"2",
 								"trips"
 							]
 						}
@@ -425,7 +425,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/users/1/trips/6",
+							"raw": "http://localhost:8080/users/2/trips/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -433,9 +433,9 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"2",
 								"trips",
-								"6"
+								"2"
 							]
 						}
 					},
@@ -447,7 +447,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/users/1/trips/5/request_approval",
+							"raw": "http://localhost:8080/users/2/trips/2/request_approval",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -455,9 +455,9 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"2",
 								"trips",
-								"5",
+								"2",
 								"request_approval"
 							]
 						}
@@ -537,7 +537,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/users/1/trips/8/flights",
+							"raw": "http://localhost:8080/users/2/trips/2/flights",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -545,9 +545,9 @@
 							"port": "8080",
 							"path": [
 								"users",
-								"1",
+								"2",
 								"trips",
-								"8",
+								"2",
 								"flights"
 							]
 						}
@@ -670,7 +670,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"eugen@domain.com\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"email\": \"eugen@domain.com\",\r\n    \"password\": \"password\"\r\n}\r\n// {\r\n//     \"email\" : \"eugen.el92@hotmail.com\",\r\n//     \"password\" : \"12345678\"\r\n// }\r\n// {\r\n//     \"email\": \"eugen@domain.com\",\r\n//     \"password\": \"password\"\r\n// }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -726,7 +726,12 @@
 	"variable": [
 		{
 			"key": "auth",
-			"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJldWdlbkBkb21haW4uY29tIiwiZXhwIjoxNjI1MDQxNTQ4fQ.DRYjcALN233Qa_hCuT7uyhfSRataimXwoNMB2uAujkKcGlvelGK31uzFyYwYArEi0MkUc-APCPee2wBuD6KcMw"
+			"value": "ADMIN ACCESS"
+		},
+		{
+			"key": "auth",
+			"value": "USER ACCESS",
+			"disabled": true
 		}
 	]
 }

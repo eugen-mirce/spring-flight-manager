@@ -3,7 +3,7 @@ package com.lhind.flight.model.entity;
 import javax.persistence.*;
 import java.util.Collection;
 
-//@Entity(name = "roles")
+@Entity(name = "roles")
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,14 +14,6 @@ public class RoleEntity {
 
     @ManyToMany(mappedBy = "roles")
     private Collection<UserEntity> users;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinTable( name = "roles_authorities",
-            joinColumns = @JoinColumn(name="roles_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="authorities_id",referencedColumnName = "id")
-
-    )
-    private Collection<AuthorityEntity> authorities;
 
     public RoleEntity() {}
 
@@ -51,13 +43,5 @@ public class RoleEntity {
 
     public void setUsers(Collection<UserEntity> users) {
         this.users = users;
-    }
-
-    public Collection<AuthorityEntity> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Collection<AuthorityEntity> authorities) {
-        this.authorities = authorities;
     }
 }

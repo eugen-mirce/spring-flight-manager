@@ -2,6 +2,7 @@ package com.lhind.flight.model.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -26,13 +27,12 @@ public class UserEntity {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<TripEntity> trips;
 
-/*  User Roles
     @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable( name="users_roles",
             joinColumns = @JoinColumn(name="users_id",referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id",referencedColumnName = "id"))
     private Collection<RoleEntity> roles;
-*/
+
 
     public int getId() {
         return id;
@@ -85,5 +85,13 @@ public class UserEntity {
     public void addTrip(TripEntity tripEntity) {
         if(trips == null) trips = new ArrayList<>();
         trips.add(tripEntity);
+    }
+
+    public Collection<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<RoleEntity> roles) {
+        this.roles = roles;
     }
 }

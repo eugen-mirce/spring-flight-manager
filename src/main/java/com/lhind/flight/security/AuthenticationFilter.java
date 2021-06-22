@@ -54,7 +54,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECURITY_TOKEN)
                 .compact();
-        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+//        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
 //        UserDTO userDTO = userService.getUserByEmail(email);
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
     }
