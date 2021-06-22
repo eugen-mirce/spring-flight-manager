@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public List<TripDTO> getTrips(String status) {
-        List<TripEntity> trips = new ArrayList<>();
+        List<TripEntity> trips;
         if(Constants.ARRAY_STATUS.contains(status.toUpperCase())) {
             trips = tripRepository.findAllByStatus(status);
         } else {
@@ -51,7 +52,23 @@ public class TripServiceImpl implements TripService {
         TripEntity tripEntity = tripRepository.findById(tripId)
                 .orElseThrow(() -> new TripServiceException("Trip Not Found."));
 
-        //TODO Add Exceptions For Missing Fields
+        if(trip.getReason() == null || trip.getReason().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDescription() == null || trip.getDescription().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getFrom() == null || trip.getFrom().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getTo() == null || trip.getTo().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getArrivalDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate().before(new Date()))
+            throw new TripServiceException("Departure date should be a date in the future.");
+        if(trip.getArrivalDate().before(new Date()))
+            throw new TripServiceException("Arrival date should be a date in the future.");
+
         tripEntity.setReason(trip.getReason());
         tripEntity.setDescription(trip.getDescription());
         tripEntity.setFrom(trip.getFrom());

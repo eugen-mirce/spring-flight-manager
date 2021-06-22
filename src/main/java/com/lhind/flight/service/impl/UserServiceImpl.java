@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -128,7 +129,22 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
 
-        //TODO Exceptions for missing fields
+        if(trip.getReason() == null || trip.getReason().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDescription() == null || trip.getDescription().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getFrom() == null || trip.getFrom().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getTo() == null || trip.getTo().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getArrivalDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate().before(new Date()))
+            throw new TripServiceException("Departure date should be a date in the future.");
+        if(trip.getArrivalDate().before(new Date()))
+            throw new TripServiceException("Arrival date should be a date in the future.");
 
         TripEntity tripEntity = modelMapper.map(trip,TripEntity.class);
         tripEntity.setUser(userEntity);
@@ -152,6 +168,81 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TripDTO getTrip(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        return modelMapper.map(tripEntity,TripDTO.class);
+    }
+
+    @Override
+    public TripDTO updateTrip(int userId, int tripId, TripDTO trip) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        if(trip.getReason() == null || trip.getReason().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDescription() == null || trip.getDescription().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getFrom() == null || trip.getFrom().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getTo() == null || trip.getTo().isEmpty())
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getArrivalDate() == null)
+            throw new TripServiceException("Missing field.");
+        if(trip.getDepartureDate().before(new Date()))
+            throw new TripServiceException("Departure date should be a date in the future.");
+        if(trip.getArrivalDate().before(new Date()))
+            throw new TripServiceException("Arrival date should be a date in the future.");
+
+        tripEntity.setReason(trip.getReason());
+        tripEntity.setDescription(trip.getDescription());
+        tripEntity.setFrom(trip.getFrom());
+        tripEntity.setTo(trip.getTo());
+        tripEntity.setDepartureDate(trip.getDepartureDate());
+        tripEntity.setArrivalDate(trip.getArrivalDate());
+
+        tripRepository.save(tripEntity);
+
+        return modelMapper.map(tripEntity,TripDTO.class);
+    }
+
+    @Override
+    public void requestTripApproval(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        if(tripEntity.getStatus().equalsIgnoreCase("CREATED")) {
+            tripEntity.setStatus("PENDING");
+            tripRepository.save(tripEntity);
+        } else if(tripEntity.getStatus().equalsIgnoreCase("APPROVED")) {
+            throw new TripServiceException("Trip Is Already Approved");
+        } else if(tripEntity.getStatus().equalsIgnoreCase("PENDING")) {
+            throw new TripServiceException("You Have Already Requested To Approve");
+        } else {
+            throw new TripServiceException("Trip Is Denied");
+        }
+    }
+
+    @Override
+    public void deleteTrip(int userId, int tripId) {
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
+        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
+                .orElseThrow(()->new TripServiceException("Trip Not Found."));
+
+        tripRepository.delete(tripEntity);
+    }
+
+    @Override
     public FlightDTO createFlight(int userId, int tripId, FlightDTO flight) {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(()-> new UserServiceException("User Not Found."));
@@ -163,7 +254,20 @@ public class UserServiceImpl implements UserService {
         if(!tripEntity.getStatus().equalsIgnoreCase("APPROVED"))
             throw new TripServiceException("Trip is not approved");
 
-        //TODO Exceptions for missing fields
+        if(flight.getFrom() == null || flight.getFrom().isEmpty())
+            throw new FlightServiceException("Missing field.");
+        if(flight.getTo() == null || flight.getTo().isEmpty())
+            throw new FlightServiceException("Missing field.");
+        if(flight.getDepartureDate() == null)
+            throw new FlightServiceException("Missing field.");
+        if(flight.getArrivalDate() == null)
+            throw new FlightServiceException("Missing field.");
+        if(flight.getDepartureDate().before(new Date()))
+            throw new FlightServiceException("Departure date should be a date in the future.");
+        if(flight.getArrivalDate().before(new Date()))
+            throw new FlightServiceException("Arrival date should be a date in the future.");
+
+
         FlightEntity flightEntity = modelMapper.map(flight,FlightEntity.class);
         flightEntity.setTrip(tripEntity);
         flightEntity = flightRepository.save(flightEntity);
@@ -213,7 +317,19 @@ public class UserServiceImpl implements UserService {
         FlightEntity flightEntity = flightRepository.findByIdAndTrip(flightId,tripEntity)
                 .orElseThrow(() -> new FlightServiceException("Flight Not Found."));
 
-        //TODO Add Flight Missing Fields Exceptions
+        if(flight.getFrom() == null || flight.getFrom().isEmpty())
+            throw new FlightServiceException("Missing field.");
+        if(flight.getTo() == null || flight.getTo().isEmpty())
+            throw new FlightServiceException("Missing field.");
+        if(flight.getDepartureDate() == null)
+            throw new FlightServiceException("Missing field.");
+        if(flight.getArrivalDate() == null)
+            throw new FlightServiceException("Missing field.");
+        if(flight.getDepartureDate().before(new Date()))
+            throw new FlightServiceException("Departure date should be a date in the future.");
+        if(flight.getArrivalDate().before(new Date()))
+            throw new FlightServiceException("Arrival date should be a date in the future.");
+
         flightEntity.setFrom(flight.getFrom());
         flightEntity.setTo(flight.getTo());
         flightEntity.setDepartureDate(flight.getDepartureDate());
@@ -236,66 +352,6 @@ public class UserServiceImpl implements UserService {
 
         flightRepository.delete(flightEntity);
     }
-
-    @Override
-    public TripDTO getTrip(int userId, int tripId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
-        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
-                .orElseThrow(()->new TripServiceException("Trip Not Found."));
-
-        return modelMapper.map(tripEntity,TripDTO.class);
-    }
-
-    @Override
-    public TripDTO updateTrip(int userId, int tripId, TripDTO trip) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
-        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
-                .orElseThrow(()->new TripServiceException("Trip Not Found."));
-
-        //TODO Add Missing Fields Exceptions
-        tripEntity.setReason(trip.getReason());
-        tripEntity.setDescription(trip.getDescription());
-        tripEntity.setFrom(trip.getFrom());
-        tripEntity.setTo(trip.getTo());
-        tripEntity.setDepartureDate(trip.getDepartureDate());
-        tripEntity.setArrivalDate(trip.getArrivalDate());
-
-        tripRepository.save(tripEntity);
-
-        return modelMapper.map(tripEntity,TripDTO.class);
-    }
-
-    @Override
-    public void requestTripApproval(int userId, int tripId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
-        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
-                .orElseThrow(()->new TripServiceException("Trip Not Found."));
-
-        if(tripEntity.getStatus().equalsIgnoreCase("CREATED")) {
-            tripEntity.setStatus("PENDING");
-            tripRepository.save(tripEntity);
-        } else if(tripEntity.getStatus().equalsIgnoreCase("APPROVED")) {
-            throw new TripServiceException("Trip Is Already Approved");
-        } else if(tripEntity.getStatus().equalsIgnoreCase("PENDING")) {
-            throw new TripServiceException("You Have Already Requested To Approve");
-        } else {
-            throw new TripServiceException("Trip Is Denied");
-        }
-    }
-
-    @Override
-    public void deleteTrip(int userId, int tripId) {
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
-        TripEntity tripEntity = tripRepository.findByIdAndUser(tripId,userEntity)
-                .orElseThrow(()->new TripServiceException("Trip Not Found."));
-
-        tripRepository.delete(tripEntity);
-    }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
