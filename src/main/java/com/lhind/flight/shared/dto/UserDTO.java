@@ -66,4 +66,17 @@ public class UserDTO {
     public void setRoles(Collection<String> roles) {
         this.roles = roles;
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", encryptedPassword='" + encryptedPassword + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
 }

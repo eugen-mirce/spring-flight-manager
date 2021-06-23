@@ -28,10 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -103,7 +100,14 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUser(int id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(()-> new UserServiceException("User Doesn't Exist."));
-        return modelMapper.map(userEntity,UserDTO.class);
+
+        UserDTO returnValue = modelMapper.map(userEntity,UserDTO.class);
+        Collection<String> roles = new HashSet<>();
+        for(RoleEntity roleEntity : userEntity.getRoles()) {
+            roles.add(roleEntity.getName());
+        }
+        returnValue.setRoles(roles);
+        return returnValue;
     }
 
     @Override
@@ -112,7 +116,13 @@ public class UserServiceImpl implements UserService {
         if(userEntity == null)
             throw new UserServiceException("User Not Found.");
 
-        return modelMapper.map(userEntity,UserDTO.class);
+        UserDTO returnValue = modelMapper.map(userEntity,UserDTO.class);
+        Collection<String> roles = new HashSet<>();
+        for(RoleEntity roleEntity : userEntity.getRoles()) {
+            roles.add(roleEntity.getName());
+        }
+        returnValue.setRoles(roles);
+        return returnValue;
     }
 
     @Override

@@ -11,6 +11,7 @@ public class FlightApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FlightApplication.class, args);
+
 	}
 
 	@Bean
@@ -23,5 +24,8 @@ public class FlightApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-
+	@Bean
+	public SpringApplicationContext springApplicationContext() {
+		return new SpringApplicationContext();
+	}
 }

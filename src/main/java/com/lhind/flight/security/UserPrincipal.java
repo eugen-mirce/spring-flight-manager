@@ -67,4 +67,12 @@ public class UserPrincipal implements UserDetails {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
 }
