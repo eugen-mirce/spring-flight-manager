@@ -19,6 +19,7 @@ public interface UserService extends UserDetailsService {
 
     TripDTO createTrip(int userId, TripDTO trip);   //??
     List<TripDTO> getUserTrips(int userId);
+    Page<TripDTO> getUserTrips(int userId,int page, int limit);
     TripDTO getTrip(int userId, int tripId);
     TripDTO updateTrip(int userId, int tripId, TripDTO trip);
     void requestTripApproval(int userId, int tripId);
@@ -26,9 +27,8 @@ public interface UserService extends UserDetailsService {
 
     FlightDTO createFlight(int userId, int tripId, FlightDTO flight);
     List<FlightDTO> getFlights(int userId, int tripId);
+    Page<FlightDTO> getFlights(int userId, int tripId, int page, int limit);
     FlightDTO getFlight(int userId, int tripId, int flightId);
     FlightDTO updateFlight(int userId, int tripId, int flightId, FlightDTO flight);
     void deleteFlight(int userId, int tripId, int flightId);
-
-
 }

@@ -4,6 +4,7 @@ import com.lhind.flight.model.entity.RoleEntity;
 import com.lhind.flight.model.entity.UserEntity;
 import com.lhind.flight.repository.RoleRepository;
 import com.lhind.flight.repository.UserRepository;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -20,6 +21,8 @@ public class InitialSetup {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    static final Logger logger = Logger.getLogger(InitialSetup.class);
+
     @Autowired
     public InitialSetup(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
@@ -30,6 +33,8 @@ public class InitialSetup {
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationReadyEvent event) {
+
+        logger.info("Application Event Is Ready.");
 
         createRole("ROLE_USER");
         RoleEntity roleAdmin = createRole("ROLE_ADMIN");

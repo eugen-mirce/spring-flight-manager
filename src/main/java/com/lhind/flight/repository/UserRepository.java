@@ -9,5 +9,6 @@ import java.util.Optional;
 
 @Repository     // JpaRepository extends PagingAndSortingRepository (which extends CrudRepository)
 public interface UserRepository extends JpaRepository<UserEntity,Integer> {
+    UserEntity findById(int id);
     UserEntity findByEmail(String email);
 }
